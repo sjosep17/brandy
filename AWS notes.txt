@@ -1,0 +1,99 @@
+EC2
+
+Load Balancer - Is used to distribute the traffic from users to servers. You create two instances first, then go to load balancer to create a load balancer and link both instances created to the load balancer. When it is launced get the DNS of the Load balancer and it as a URL to test the load balancer was done successfully.
+
+If one server is down it would automatically divert the traffic request from users to only working servers. To know which instance is down, you go to Load balancer to check status.
+
+------------------------------
+Auto-Scaling
+When the traffic increases and webservers cant handle the traffic they would go down, but the auto scaling concepts would automatically create extra instances to take off traffic from the running webservers.
+Auto scaling helps to ensure that you have the right number of instances available to handle the load for your application.
+Collection of EC2 instances is called an auto scaling group, you can also specify the minimum and maximum number of intances in autoscaling group. Amazon auto scaling helps to ensure you never go above your specified size.
+
+Create Load balancer, create launch configuration, create autoscaling group, creatr topic in SNS, create alarm in cloudwatch, add policy in auto scaling 
+
+To create a Load balancer, go to load balancers, create load balancer, classic LB, Name your LB, create security group Http and SSH, configure health check, attach instances, create.
+Launch configuration contains the configuration information that would be run on the new EC2 instance which is automatically created.
+To create Launch Configuration , under auto scaling you find launch configuration, Name it, mention the AMI info (OS), choose instance type, under advanced details in user data (put in the script), select security group, create a new keypair, create launch configuration.
+To create autoscaling group, go launch configuration, select then go to actions, create auto scaling group, Name it, in vpc you pick a subnet, attach to an exiting load balancer, Choose classic LB, edit Group size option, Name the Tag, create auto scaling group.
+SNS (Simple notification Service) When the traffic increases to your EC2 instances a notification should be sent to you to let you know.
+To Create topic in SNS - Go to services on your console and search for SNS, go to topics, create topic, standard, name the topic and display name. Select the topic, Create subscriptions, select protocol to email, add email address to endpoint.
+Create Alarm in CloudWatch - In services search for cloud watch, go to alarms, create alarm, select metric (metric is all about measurements of traffic), search cpu, select EC2 > autoscaling group, Select CPUUtilization, select Greater than, edit threshold value,  select an exisiting SNS, Name the alarm, create alarm.
+Create a decrease alarm and use less than with the threshold.
+Add policies to auto scaling group - Create Increase policy (to add extra EC2 instance when server is busy) go to automatic scaling option, create policy, policy type is simple scaling, NAme the policy, cloudwatch alarm name (select increase alarm) created previously, take the action (add 1) create policy.
+Create Decrease policy (to remove any extra EC2 instance that was created when server was busy)
+
+AutoScaling is scale out.
+How do you measure metric "CPUUtilization"
+---------------------------------
+Protecting instance from accidental termination.
+
+Instance settings and check enable termination protection.
+
+------------
+
+Scale up -- This is to increase the hardware configuration of an instance.
+
+To increase the ram, you need to stop instance, go to actions, instance settings, instance type then increase ram there. 
+
+For each Instance a volume is created. 
+How to identify the volume for an instance is thru the storage in the instance portal, then you find the volume id 
+
+Scale Out -- This is Creating a new instance 
+
+Scale up and Scale down are Vertical scaling
+
+Scale in and Scale Out are Horizontal scaling 
+
+-----------
+
+Attach / Dettaching Volume
+
+Adding extra volumes when launching instances. (Volume can be said to be like drive partitions)
+The default volume is the root volume and any other volume added is an EBS- Elastic Block storage.
+
+Dettaching Volumes --- When you want to dettach EBS volume, first you identify the EBS volume by going to the volumes and check the snapshot section, every root volume has a snapshot. To dettach the EBS volume, click on the volume and go to action to dettach it.
+
+
+#!/bin/bash
+yum update -y
+yum install -y httpd
+systemctl start httpd.service
+systemctl enable httpd.service
+echo "Hello DSA09 Batch From $(hostname-f)" > /var/www/html/index.html
+
+---------------------------------------------------
+Snapshots - the way to move a volume from one region to another region. The need to move volumes is to help preserve data.
+
+First you create the EC2 instance and add the EBS volume to the instance. You go into the volumes and then you dettach the EBS volume, convert the volume to snapshot, create a snapshot ,you copy the snapshot and initiate it in the region, that way the snapshot has been moved, then you create a volume 
+YOU CANT MOVE VOLUMES, YOU CAN ONLY MOVE SNAPSHOTS
+
+------------------------------
+Amazon Machine Image
+This is an operating system, the need for customized AMI is 
+To create image select the instance go to action, instance settings, create the instance
+To customize the AMI, go to launch instance, select AMIs, you find the created AMI then you select it as the OS.
+Images are region specific, it can also be moved. To move you select the AMI, go to actions and copy AMI and initiate the move to the region, go to the region you copied it to and confirm the image has been created.
+To delete AMI, go to the AMI, in actions click deregistered.
+
+---------------------------
+How to check billing and Free tier limitations
+go to billing, scroll down to check the aws free tier, it would give you a breakdown of usage.
+AWS charges for both stopped instances and running instances. It is a good practice to terminate instances you are not using anymore.
+
+---------------------------------------------------
+S3
+Simple storage services 
+
+It is safe and highly scalable. Its an object storage, which means its for files only an example is google drive, dropbox. 
+To setup a Storage on S3, you have to do it thru creating buckets.
+When you create a bucket, it has to be a globally unique bucket.
+
+Create a bucket in the S3 console, name the bucket and pick your region, create, you can make it public. You then select the bucket and upload objects into the bucket.
+Every object has a unique link, to access the object, you do thru the object url. You can make the object public or private in the access control (ACL).
+The dashboard of S3 is global which means it is not region specific.
+To delete a bucket, you need to empty the bucket by deleting the objects inside the bucket.
+AWS provides S3 calculator to help estimate monthly bills for projects.
+S3 Storgae classes/tiers
+You can use the storage class when uploading objects, there are many options to fit your kind of project.
+Replication rules are used to balance the traffic.
